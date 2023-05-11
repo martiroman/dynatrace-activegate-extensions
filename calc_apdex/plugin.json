@@ -1,0 +1,90 @@
+{
+  "name": "custom.remote.python.apdex",
+  "version": "1.19",
+  "type": "python",
+  "entity": "CUSTOM_DEVICE",
+  "metricGroup": "tech.apdex",
+  "processTypeNames": ["PYTHON"],
+  "technologies": ["APDEX"],
+  "favicon": "",
+  "source": {
+    "package": "calc_apdex",
+    "className": "ApdexPluginRemote",
+    "install_requires": ["requests>=2.6.0","pandas", "numpy"],
+    "activation": "Remote"
+  },
+  "metrics": [
+    {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries": {
+        "key": "apdex",
+        "unit": "Count",
+	"dimensions": ["name"],
+        "displayname": "APDEX"
+      }
+    }
+  ],
+    "properties" : [
+    {
+      "key" : "metric",
+      "type" : "string"
+    },
+    {
+      "key" : "name",
+      "type" : "string"
+    },
+    {
+      "key" : "pollingInterval",
+      "type" : "integer"
+    }
+  ],
+  "configUI": {
+        "displayName": "ActiveGate APDEX Extension",
+        "properties": [
+			{
+                        "key" : "metric",
+                        "displayName" :  "Metrica APDEX",
+                        "displayHint": "Ingrese la metrica a consultar. Ejemplo: calc:apps.web.sgi.sgiapdex"
+                        },
+			{
+			"key" : "name",
+			"displayName" :  "Nombre Aplicacion",
+			"displayHint": "Ingrese el nombre de la aplicacion" 
+			},
+			{
+                        "key" : "pollingInterval",
+                        "displayName" :  "Intervalo",
+                        "displayHint": "Ingrese el intervalo en minutos"
+                        }
+
+	  ]
+    },
+     "ui": {
+       "keymetrics" : [
+      {
+        "key": "apdex",
+        "aggregation": "avg",
+        "mergeaggregation": "avg",
+        "displayname": "APDEX"
+      }
+    ],
+        "charts": [
+            {
+                "group": "APDEX",
+                "title": "APDEX",
+                "description": " - ",
+                "explanation": " - ",
+                "link": " - ",
+                "series": [
+                    {
+                        "key": "apdex",
+                        "displayname": "APDEX",
+			"seriestype": "bar",
+                        "stacked": true,
+                        "color": "#00cc00"
+                    }
+                ]
+            }
+        ]
+    }
+}

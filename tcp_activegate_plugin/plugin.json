@@ -1,0 +1,140 @@
+{
+  "name": "custom.remote.python.networkconnections",
+  "version": "1.0",
+  "type": "python",
+  "entity": "CUSTOM_DEVICE",
+  "metricGroup": "tech.network",
+  "processTypeNames": ["PYTHON"],
+  "technologies": ["TCP Connection"],
+  "favicon": "",
+  "source": {
+    "package": "tcp_activegate_plugin",
+    "className": "NetworkConnectionsPluginRemote",
+    "install_requires": ["requests>=2.6.0","paramiko"],
+    "activation": "Remote"
+  },
+  "metrics": [
+    {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries": {
+        "key": "tcp.established",
+        "unit": "Count",
+	"dimensions": ["service"],
+        "displayname": "TCP Connectivity - Count Established"
+      }
+    },
+    {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries": {
+        "key": "tcp.time_wait",
+        "unit": "Count",
+	"dimensions": ["service"],
+        "displayname": "TCP Connectivity - Count Time Wait"
+      }
+    }
+  ],
+    "properties" : [
+    {
+      "key" : "servername",
+      "type" : "string"
+    },
+    {
+      "key" : "ipservidor",
+      "type" : "string"
+    },
+    {
+      "key" : "usuario",
+      "type" : "string"
+    },
+    {
+      "key" : "password",
+      "type" : "password"
+    },
+    {
+      "key" : "puerto",
+      "type" : "integer",
+      "defaultValue": 22
+    },
+    {
+      "key" : "patron",
+      "type" : "string"
+    }
+  ],
+  "configUI": {
+        "displayName": "ActiveGate TCP Connections Extension",
+        "properties": [
+			{
+                        "key" : "servername",
+                        "displayName" :  "Nombre Servidor o Servicio",
+                        "displayHint": "Ingrese un nombre para identificar el servicio"
+                        },
+			{
+			"key" : "ipservidor",
+			"displayName" :  "IP Servidor",
+			"displayHint": "Ingrese IP del servidor a monitorear" 
+			},
+			{
+			"key" : "usuario",
+			"displayName" :  "Usuario",
+			"displayHint": "" 
+			},
+			{
+			"key" : "password",
+			"displayName" :  "Password",
+			"displayHint": "" 
+			},
+			{
+			"key" : "puerto",
+			"displayName" :  "Puerto",
+			"displayHint": "Default: 22" 
+			},
+			{
+			"key" : "patron",
+			"displayName" :  "Patron",
+			"displayHint": "Separar por nombre de servicio con | y ,: Servicio1|104.18.29.219:525,Servicio2|localhost" 
+			}
+
+	  ]
+    },
+     "ui": {
+       "keymetrics" : [
+      {
+        "key": "tcp.established",
+        "aggregation": "avg",
+        "mergeaggregation": "avg",
+        "displayname": "Established"
+      },
+      {
+        "key": "tcp.time_wait",
+        "aggregation": "avg",
+        "mergeaggregation": "avg",
+        "displayname": "Time Wait"
+      }
+    ],
+        "charts": [
+            {
+                "group": "Network Connections",
+                "title": "Network Connections - TCP",
+                "description": " - ",
+                "explanation": " - ",
+                "link": " - ",
+                "series": [
+                    {
+                        "key": "tcp.established",
+                        "displayname": "Established",
+			"seriestype": "bar",
+                        "stacked": true,
+                        "color": "#00cc00"
+                    },
+		    {
+                        "key": "tcp.time_wait",
+                        "displayname": "Time Wait",
+                        "seriestype": "bar",
+                        "stacked": true,
+                        "color": "#ff0000"
+                    }
+                ]
+            }
+        ]
+    }
+}
