@@ -49,8 +49,6 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
         patron = data[1]
         service = data[0]
 
-
-        ## Metrica Established 
         command = 'netstat -na | grep -w "'+ patron +'" | grep -i '+ estado + ' | wc -l'
         stdin, stdout, stderr = ssh.exec_command(command)
         result = stdout.read().decode()
