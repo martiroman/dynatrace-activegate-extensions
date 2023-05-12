@@ -1,4 +1,3 @@
-import requests
 from ruxit.api.base_plugin import RemoteBasePlugin
 import logging
 import paramiko
@@ -13,50 +12,52 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
         self.password = self.config["password"]
         self.puerto = self.config["puerto"]
         self.patron = self.config["patron"]
+        self.key = self.config.get("ssh_key_file") if self.config.get("ssh_key_file") else None
+        self.passphrase = self.config.get("ssh_key_passphrase") if self.config.get("ssh_key_passphrase") else None
+
+        self.group = self.topology_builder.create_group(identifier="NetworkConnectionsGroup", group_name="Network Connections")
+        self.device = self.group.create_device(identifier=self.ipservidor, display_name=self.servername)
+
+        logger.info("Topology: group name=%s, device name=%s", self.group.name, self.device.name)
+        self.device.report_property(key='IP addresses', value=self.ipservidor)
 
     def query(self, **kwargs):
-        group = self.topology_builder.create_group(identifier="NetworkConnectionsGroup", group_name="Network Connections")
-
-        device = group.create_device(identifier=self.ipservidor, display_name=self.servername)
-
-        logger.info("Topology: group name=%s, device name=%s", group.name, device.name)
         
+        patrones = self.patron.split(",")
+        ssh = self.ConnectSSH()
+        for patron in patrones:
+            self.getMetric(patron, "established", ssh)
+            self.getMetric(patron, "time_wait", ssh)
+        
+        ssh.close()     
+        
+    def connectSSH(self):
         ## Conexion SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
-        ssh.connect(self.ipservidor, self.puerto, self.usuario, self.password)
-       
-        patrones = self.patron.split(",")
+        if self.key is not None:
+                logger.info("Conexion usando Key")
+                ssh.connect(self.ipservidor, self.puerto, self.usuario, self.key, self.passphrase)
+        else:
+                logger.info("Conexion usando")
+                self.client.connect(self.ipservidor, self.puerto, self.usuario, self.password, timeout=20)
+        return ssh
 
-        for patron in patrones:
-            data = patron.split("|")
-            patron = data[1]
-            service = data[0]
+    def getMetric(self, patron, estado, ssh):
+        data = patron.split("|")
+        patron = data[1]
+        service = data[0]
 
-            ## Metrica Established 
-            command = 'netstat -na | grep -w "'+ patron +'" | grep ESTABLISHED | wc -l'
-            stdin, stdout, stderr = ssh.exec_command(command)
-            result = stdout.read().decode()
-        
-            device.absolute(key='tcp.established', value=result, dimensions = { "service" : service })
-            device.report_property(key='Servicio ' + service, value=patron)
-            
-            logger.info(service + " | " + patron + " - " + "established=" + result)
-        
-            ## Metrica Time Wait
-            command = 'netstat -na | grep -w "'+ patron +'" | grep TIME_WAIT | wc -l'
-            stdin, stdout, stderr = ssh.exec_command(command)
-            result = stdout.read().decode()
 
-            device.absolute(key='tcp.time_wait', value=result, dimensions = { "service" : service })
-        
-            device.report_property(key='Servicio ' + service, value=patron)
-            
-            logger.info(service + " | " +  patron + " - " + "time_wait=" + result)
-        
-        ## Cierre SSH
-        ssh.close()
+        ## Metrica Established 
+        command = 'netstat -na | grep -w "'+ patron +'" | grep -i '+ estado + ' | wc -l'
+        stdin, stdout, stderr = ssh.exec_command(command)
+        result = stdout.read().decode()
+                  
+        logger.info(service + " | " + patron + " - " + "estado=" + result)
 
-        ## Metadata:
-        device.report_property(key='IP addresses', value=self.ipservidor)
+        self.device.absolute(key='tcp.time_wait', value=result, dimensions = { "service" : service })
+        self.device.report_property(key='Servicio ' + service, value=patron)
+
+        return 1

@@ -58,42 +58,63 @@
     {
       "key" : "patron",
       "type" : "string"
+    },
+    { "key": "ssh_key_file", 
+    "type": "String" 
+    },
+    { "key": "ssh_key_passphrase", 
+    "type": "Password" 
     }
   ],
   "configUI": {
         "displayName": "ActiveGate TCP Connections Extension",
         "properties": [
 			{
-                        "key" : "servername",
-                        "displayName" :  "Nombre Servidor o Servicio",
-                        "displayHint": "Ingrese un nombre para identificar el servicio"
-                        },
+      "key" : "servername",
+      "displayName" :  "Nombre Servidor o Servicio",
+      "displayHint": "Ingrese un nombre para identificar el servicio",
+      "displayOrder": 1
+      },
 			{
 			"key" : "ipservidor",
 			"displayName" :  "IP Servidor",
-			"displayHint": "Ingrese IP del servidor a monitorear" 
+			"displayHint": "Ingrese IP del servidor a monitorear",
+      "displayOrder": 2
 			},
 			{
 			"key" : "usuario",
 			"displayName" :  "Usuario",
-			"displayHint": "" 
+			"displayHint": "",
+      "displayOrder": 3 
 			},
 			{
 			"key" : "password",
 			"displayName" :  "Password",
-			"displayHint": "" 
+			"displayHint": "",
+      "displayOrder": 4 
 			},
 			{
 			"key" : "puerto",
 			"displayName" :  "Puerto",
-			"displayHint": "Default: 22" 
+			"displayHint": "Default: 22",
+      "displayOrder": 5
 			},
 			{
 			"key" : "patron",
 			"displayName" :  "Patron",
-			"displayHint": "Separar por nombre de servicio con | y ,: Servicio1|104.18.29.219:525,Servicio2|localhost" 
-			}
-
+			"displayHint": "Separar por nombre de servicio con | y ,: Servicio1|104.18.29.219:525,Servicio2|localhost",
+      "displayOrder": 6
+			},
+      {
+        "key": "ssh_key_file",
+        "displayName": "(Opcional) Private key file",
+        "displayOrder": 7
+    },
+    {
+        "key": "ssh_key_passphrase",
+        "displayName": "(Opcional) Private key passphrase",
+        "displayOrder": 9
+    }
 	  ]
     },
      "ui": {
