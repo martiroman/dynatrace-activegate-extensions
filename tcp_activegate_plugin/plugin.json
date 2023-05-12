@@ -1,6 +1,6 @@
 {
   "name": "custom.remote.python.networkconnections",
-  "version": "1.1",
+  "version": "1.1.1",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "metricGroup": "tech.network",
@@ -81,23 +81,23 @@
 			"displayHint": "Ingrese IP del servidor a monitorear",
       "displayOrder": 2
 			},
+      {
+      "key" : "puerto",
+      "displayName" :  "Puerto",
+      "displayHint": "Default: 22",
+      "displayOrder": 3
+      },
 			{
 			"key" : "usuario",
 			"displayName" :  "Usuario",
 			"displayHint": "",
-      "displayOrder": 3 
+      "displayOrder": 4 
 			},
 			{
 			"key" : "password",
 			"displayName" :  "Password",
 			"displayHint": "",
-      "displayOrder": 4 
-			},
-			{
-			"key" : "puerto",
-			"displayName" :  "Puerto",
-			"displayHint": "Default: 22",
-      "displayOrder": 5
+      "displayOrder": 5 
 			},
 			{
 			"key" : "patron",
