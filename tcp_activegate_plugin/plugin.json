@@ -1,6 +1,6 @@
 {
   "name": "custom.remote.python.networkconnections",
-  "version": "1.3",
+  "version": "2.1",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "metricGroup": "tech.network",
@@ -96,25 +96,25 @@
 			{
 			"key" : "password",
 			"displayName" :  "Password",
-			"displayHint": "",
+			"displayHint": "Opcional si se utiliza ssh-key",
       "displayOrder": 5 
-			},
-			{
-			"key" : "patron",
-			"displayName" :  "Patron",
-			"displayHint": "Separar por nombre de servicio con | y ,: Servicio1|104.18.29.219:525,Servicio2|localhost",
-      "displayOrder": 6
 			},
       {
         "key": "ssh_key_file",
         "displayName": "(Opcional) Private key file",
-        "displayOrder": 7
+        "displayOrder": 6
     },
     {
         "key": "ssh_key_passphrase",
         "displayName": "(Opcional) Private key passphrase",
-        "displayOrder": 9
-    }
+        "displayOrder": 7
+    },
+    {
+			"key" : "patron",
+			"displayName" :  "Patron",
+			"displayHint": "Separar por nombre de servicio con | y ,: Servicio1|104.18.29.219:525,Servicio2|localhost",
+      "displayOrder": 8
+		}
 	  ]
     },
      "ui": {

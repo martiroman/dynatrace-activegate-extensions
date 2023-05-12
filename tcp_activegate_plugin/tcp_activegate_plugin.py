@@ -23,7 +23,7 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
         self.device.report_property(key='IP addresses', value=self.ipservidor)
         
         patrones = self.patron.split(",")
-        ssh = self.ConnectSSH()
+        ssh = self.connectSSH()
         for patron in patrones:
             self.getMetric(patron, "established", ssh)
             self.getMetric(patron, "time_wait", ssh)
@@ -33,14 +33,15 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
     def connectSSH(self):
         ## Conexion SSH
         ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        
+        ssh.load_system_host_keys()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+
         if self.key is not None:
                 logger.info("Conexion usando Key")
-                ssh.connect(self.ipservidor, self.puerto, self.usuario, self.key, self.passphrase)
+                ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, key_filename=self.key, passphrase=self.passphrase)
         else:
                 logger.info("Conexion usando")
-                self.client.connect(self.ipservidor, self.puerto, self.usuario, self.password, timeout=20)
+                ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, password=self.password, timeout=20)
         return ssh
 
     def getMetric(self, patron, estado, ssh):
@@ -54,7 +55,7 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
                   
         logger.info(service + " | " + patron + " - " + "estado=" + result)
 
-        self.device.absolute(key='tcp.time_wait', value=result, dimensions = { "service" : service })
+        self.device.absolute(key='tcp.'+ estado, value=result, dimensions = { "service" : service })
         self.device.report_property(key='Servicio ' + service, value=patron)
 
         return 1
