@@ -6,22 +6,21 @@ logger = logging.getLogger(__name__)
 
 class NetworkConnectionsPluginRemote(RemoteBasePlugin):
     def initialize(self, **kwargs):
-        self.servername = self.config["servername"]
-        self.ipservidor = self.config["ipservidor"]
-        self.usuario = self.config["usuario"]
-        self.password = self.config["password"]
-        self.puerto = self.config["puerto"]
-        self.patron = self.config["patron"]
+        self.servername = self.config.get("servername")
+        self.ipservidor = self.config.get("ipservidor")
+        self.usuario = self.config.get("usuario")
+        self.password = self.config.get("password") if self.config.get("password") else None
+        self.puerto = self.config.get("puerto")
+        self.patron = self.config.get("patron")
         self.key = self.config.get("ssh_key_file") if self.config.get("ssh_key_file") else None
         self.passphrase = self.config.get("ssh_key_passphrase") if self.config.get("ssh_key_passphrase") else None
 
-        self.group = topology_builder.create_group(identifier="NetworkConnectionsGroup", group_name="Network Connections")
+    def query(self, **kwargs):
+        self.group = self.topology_builder.create_group(identifier="NetworkConnectionsGroup", group_name="Network Connections")
         self.device = self.group.create_device(identifier=self.ipservidor, display_name=self.servername)
 
         logger.info("Topology: group name=%s, device name=%s", self.group.name, self.device.name)
         self.device.report_property(key='IP addresses', value=self.ipservidor)
-
-    def query(self, **kwargs):
         
         patrones = self.patron.split(",")
         ssh = self.ConnectSSH()
