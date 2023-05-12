@@ -15,7 +15,7 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
         self.key = self.config.get("ssh_key_file") if self.config.get("ssh_key_file") else None
         self.passphrase = self.config.get("ssh_key_passphrase") if self.config.get("ssh_key_passphrase") else None
 
-        self.group = self.topology_builder.create_group(identifier="NetworkConnectionsGroup", group_name="Network Connections")
+        self.group = topology_builder.create_group(identifier="NetworkConnectionsGroup", group_name="Network Connections")
         self.device = self.group.create_device(identifier=self.ipservidor, display_name=self.servername)
 
         logger.info("Topology: group name=%s, device name=%s", self.group.name, self.device.name)
