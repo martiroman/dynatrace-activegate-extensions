@@ -1,16 +1,15 @@
 {
   "name": "custom.remote.python.apdex",
-  "version": "1.19",
+  "metricGroup": "tech.apdex",
+  "version": "1.36",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
-  "metricGroup": "tech.apdex",
-  "processTypeNames": ["PYTHON"],
   "technologies": ["APDEX"],
   "favicon": "",
   "source": {
     "package": "calc_apdex",
     "className": "ApdexPluginRemote",
-    "install_requires": ["requests>=2.6.0","pandas", "numpy"],
+    "install_requires": ["requests>=2.6.0","pandas", "numpy", "croniter"],
     "activation": "Remote"
   },
   "metrics": [
@@ -19,7 +18,7 @@
       "timeseries": {
         "key": "apdex",
         "unit": "Count",
-	"dimensions": ["name"],
+        "dimensions": ["name"],
         "displayname": "APDEX"
       }
     }
@@ -34,30 +33,62 @@
       "type" : "string"
     },
     {
-      "key" : "pollingInterval",
-      "type" : "integer"
+      "key" : "token",
+      "type" : "string"
+    },
+    {
+      "key" : "endpoint",
+      "type" : "string"
+    },
+    {
+      "key" : "schedule",
+      "type" : "string"
+    },
+    {
+      "key" : "timeframe",
+      "type" : "string"
     }
   ],
   "configUI": {
         "displayName": "ActiveGate APDEX Extension",
         "properties": [
-			{
+                        {
                         "key" : "metric",
                         "displayName" :  "Metrica APDEX",
+                        "displayOrder" : 2,
                         "displayHint": "Ingrese la metrica a consultar. Ejemplo: calc:apps.web.sgi.sgiapdex"
                         },
-			{
-			"key" : "name",
-			"displayName" :  "Nombre Aplicacion",
-			"displayHint": "Ingrese el nombre de la aplicacion" 
-			},
-			{
-                        "key" : "pollingInterval",
-                        "displayName" :  "Intervalo",
-                        "displayHint": "Ingrese el intervalo en minutos"
+                        {
+                        "key" : "name",
+                        "displayName" :  "Nombre Aplicacion",
+                        "displayOrder" : 1,
+                        "displayHint": "Ingrese el nombre de la aplicacion"
+                        },
+                        {
+                        "key" : "token",
+                        "displayName" :  "API Token",
+                        "displayOrder" : 3,
+                        "displayHint": "Scope: metrics.ingest + metrics.read"
+                        },
+                                                {
+                        "key" : "endpoint",
+                        "displayName" :  "API Endpoint",
+                        "displayOrder" : 4,
+                        "displayHint": "URL: "
+                        },
+                        {
+                        "key" : "schedule",
+                        "displayName": "(Opcional) Schedule",
+                        "displayOrder": 5,
+                        "displayHint": "Formato Cron. Ejemplo: */10 * * * *. (Default cada 1 minuto)"
+                        },
+                        {
+                        "key" : "timeframe",
+                        "displayName": "(Opcional) Timeframe",
+                        "displayOrder": 6,
+                        "displayHint": "Formato Dynatrace. Default: now-24h"
                         }
-
-	  ]
+          ]
     },
      "ui": {
        "keymetrics" : [
@@ -79,7 +110,7 @@
                     {
                         "key": "apdex",
                         "displayname": "APDEX",
-			"seriestype": "bar",
+                        "seriestype": "bar",
                         "stacked": true,
                         "color": "#00cc00"
                     }
