@@ -1,14 +1,14 @@
 {
-  "name": "custom.remote.python.apdex",
-  "metricGroup": "tech.apdex",
-  "version": "1.37",
+  "name": "custom.remote.python.metricfilter",
+  "metricGroup": "tech.extension",
+  "version": "1",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
-  "technologies": ["APDEX"],
+  "technologies": ["CustomMetric"],
   "favicon": "",
   "source": {
     "package": "calc_apdex",
-    "className": "ApdexPluginRemote",
+    "className": "MetricFilterPluginRemote",
     "install_requires": ["requests>=2.6.0","pandas", "numpy", "croniter"],
     "activation": "Remote"
   },
@@ -16,10 +16,10 @@
     {
       "entity": "CUSTOM_DEVICE",
       "timeseries": {
-        "key": "apdex",
+        "key": "metricfilter",
         "unit": "Count",
-        "dimensions": ["name"],
-        "displayname": "APDEX"
+        "dimensions": ["app"],
+        "displayname": "MetricFilter"
       }
     }
   ],
@@ -50,7 +50,7 @@
     }
   ],
   "configUI": {
-        "displayName": "ActiveGate APDEX Extension",
+        "displayName": "ActiveGate Metric Filter Extension",
         "properties": [
                         {
                         "key" : "metric",
@@ -89,34 +89,5 @@
                         "displayHint": "Formato Dynatrace. Default: now-24h"
                         }
           ]
-    },
-     "ui": {
-       "keymetrics" : [
-      {
-        "key": "apdex",
-        "aggregation": "avg",
-        "mergeaggregation": "avg",
-        "displayname": "APDEX"
-      }
-    ],
-        "charts": [
-            {
-                "group": "APDEX",
-                "title": "APDEX",
-                "description": " - ",
-                "explanation": " - ",
-                "link": " - ",
-                "series": [
-                    {
-                        "key": "apdex",
-                        "displayname": "APDEX",
-                        "seriestype": "bar",
-                        "stacked": true,
-                        "color": "#00cc00"
-                    }
-                ]
-            }
-        ]
     }
 }
-

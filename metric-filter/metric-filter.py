@@ -9,7 +9,7 @@ import urllib.parse
 
 logger = logging.getLogger(__name__)
 
-class ApdexPluginRemote(RemoteBasePlugin):
+class MetricFilterPluginRemote(RemoteBasePlugin):
 
     def initialize(self, **kwargs):
         self.name = self.config["name"]
@@ -18,16 +18,18 @@ class ApdexPluginRemote(RemoteBasePlugin):
         self.endpoint = self.config["endpoint"]
         self.schedule = self.config["schedule"] or "*/1 * * * *"
         self.timeframe = self.config["timeframe"] or "now-24h"
-        #self.rango = self.config["rango"] or "8-20"
 
     def sendMetric(self, val):
+        '''
+        Routine send Metric via API to Dynatrace
+        '''
         parametros = {
             'accept': 'application/json; charset=utf-8',
             'Authorization': 'Api-Token ' + self.token,
             'Content-Type': 'text/plain; charset=utf-8'
         }
 
-        data = 'apdex.horalab,app=' + self.name +' ' + str(val)
+        data = 'apdex.filter,app=' + self.name +' ' + str(val)
         query = "/v2/metrics/ingest?"
 
         respuesta = requests.post(self.endpoint + query, headers=parametros, data=data, verify=False)
@@ -38,11 +40,13 @@ class ApdexPluginRemote(RemoteBasePlugin):
             logger.info("Error al enviar la metrica. Codigo de estado: ", respuesta.status_code)
 
     def getMetric(self):
-
-        TIMEFRAME = "&from=" + self.timeframe
-        RESOLUTION = "&resolution=1m"
+        '''
+        Routine extract Metric from Dynatrace via API
+        '''
+        timeframe = "&from=" + self.timeframe
+        resolution = "&resolution=1m"
         metric = self.metric
-        query = "/v2/metrics/query?metricSelector=" + urllib.parse.quote(metric, safe='()') + RESOLUTION  + TIMEFRAME
+        query = "/v2/metrics/query?metricSelector=" + urllib.parse.quote(metric, safe='()') + resolution  + timeframe
 
         parametros = {
             'accept': 'application/json; charset=utf-8',
@@ -68,14 +72,8 @@ class ApdexPluginRemote(RemoteBasePlugin):
 
 
         DF_Data['Timestamp'] = pd.to_datetime(DF_Data['Timestamp'], unit='ms')
-        #filtro = ((DF_Data['Timestamp'].dt.dayofweek >= 0) & (DF_Data['Timestamp'].dt.dayofweek <= 4)) & ((DF_Data['Timestamp'].dt.hour >= 8) & (DF_Data['Timestamp'].dt.hour <= 19))
-
-        #DF_Data = DF_Data[filtro]
 
         X = np.array(DF_Data["Value"], dtype=float)
-
-        # Redondeo de decimales
-        #X = np.around(X, decimals=3)
 
         # Calcular los valores estadísticos
         p10 = np.percentile(X, 10)
