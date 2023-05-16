@@ -1,7 +1,7 @@
 {
   "name": "custom.remote.python.apdex",
   "metricGroup": "tech.apdex",
-  "version": "1.36",
+  "version": "1.37",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "technologies": ["APDEX"],
@@ -119,3 +119,4 @@
         ]
     }
 }
+

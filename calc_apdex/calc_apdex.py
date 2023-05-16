@@ -68,9 +68,9 @@ class ApdexPluginRemote(RemoteBasePlugin):
 
 
         DF_Data['Timestamp'] = pd.to_datetime(DF_Data['Timestamp'], unit='ms')
-        filtro = ((DF_Data['Timestamp'].dt.dayofweek >= 0) & (DF_Data['Timestamp'].dt.dayofweek <= 4)) & ((DF_Data['Timestamp'].dt.hour >= 8) & (DF_Data['Timestamp'].dt.hour <= 19))
+        #filtro = ((DF_Data['Timestamp'].dt.dayofweek >= 0) & (DF_Data['Timestamp'].dt.dayofweek <= 4)) & ((DF_Data['Timestamp'].dt.hour >= 8) & (DF_Data['Timestamp'].dt.hour <= 19))
 
-        DF_Data = DF_Data[filtro]
+        #DF_Data = DF_Data[filtro]
 
         X = np.array(DF_Data["Value"], dtype=float)
 
@@ -104,3 +104,4 @@ class ApdexPluginRemote(RemoteBasePlugin):
             self.sendMetric(val)
 
             logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX  | " + self.name + " = " + str(val))
+
