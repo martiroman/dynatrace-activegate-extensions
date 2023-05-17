@@ -17,8 +17,10 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         self.token = self.config["token"]
         self.endpoint = self.config["endpoint"]
         self.schedule = self.config["schedule"] or "*/1 * * * *"
+        self.tag = self.config["tag"] or "schedule1"
         self.schedule2 = self.config["schedule"] or "0 * * * *"
-        self.timeframe = self.config["timeframe"] or "now-24h"
+        self.tag2 = self.config["tag2"] or "schedule2"
+        self.timeframe = self.config["timeframe"] or "now-1h"
 
     def sendMetric(self, data):
         '''
@@ -86,29 +88,33 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
 
         return p50
 
+    def cronCheck(self, now, cron_expr_list):
+        cron_expr_list = self.schedule.split(';')
+        ejecuta = 0
+        for ncron in cron_expr_list:
+            cron = croniter(ncron, now, ret_type=datetime)
+            previous_execution = cron.get_prev().astimezone()
+
+            time_since = now - previous_execution
+            if time_since <= timedelta(minutes=1):
+                ejecuta = 1
+        return ejecuta
+
     def query(self, **kwargs):
         '''
         Routine call from the ActiveGate
         '''
         now = datetime.now().astimezone()
-        
-        cron = croniter(self.schedule, now, ret_type=datetime)
-        previous_execution = cron.get_prev().astimezone()
 
-        time_since = now - previous_execution
-        if time_since <= timedelta(minutes=1):
-            horario = "laboral"
+        if self.cronCheck(now, self.schedule):
+            tag = self.tag
         
-        cron2 = croniter(self.schedule2, now, ret_type=datetime)
-        previuos_execution = cron2.get_prev().astimezone()
-        
-        time_since = now - previuos_execution
-        if time_since <= now - previous_execution:
-            horario = "nolaboral"
+        if self.cronCheck(now, self.schedule2):
+            tag = self.tag2
 
         val = self.getMetric()
-        data = 'apdex.filter.' + self.name +',horario=' + horario +' ' + str(val)
+        data = 'apdex.filter.' + self.name +',tag=' + tag +' ' + str(val)
         self.sendMetric(data)
 
-        logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX " + horario + ' | ' + self.name + " = " + str(val))
+        logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX " + tag + ' | ' + self.name + " = " + str(val))
 

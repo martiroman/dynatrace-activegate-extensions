@@ -45,7 +45,15 @@
       "type" : "string"
     },
     {
+      "key" : "tag",
+      "type" : "string"
+    },
+    {
       "key" : "schedule2",
+      "type" : "string"
+    },
+    {
+      "key" : "tag2",
       "type" : "string"
     },
     {
@@ -81,22 +89,34 @@
                         "displayHint": "URL: "
                         },
                         {
+                          "key" : "timeframe",
+                          "displayName": "(Opcional) Timeframe",
+                          "displayOrder": 5,
+                          "displayHint": "Formato Dynatrace. Default: now-1h"
+                        },  
+                        {
                         "key" : "schedule",
-                        "displayName": "(Opcional) Schedule - Laboral",
-                        "displayOrder": 5,
-                        "displayHint": "Formato Cron. Ejemplo: */10 * * * *. (Default cada 1 minuto)"
+                        "displayName": "Schedule 1",
+                        "displayOrder": 6,
+                        "displayHint": "Formato Cron. Ejemplo: */10 * * * *"
+                        },
+                        {
+                          "key" : "tag",
+                          "displayName": "Tag Schedule 1",
+                          "displayOrder": 7,
+                          "displayHint": "Tag para identificar la dimension para el schedule 1"
                         },
                         {
                           "key" : "schedule2",
-                          "displayName": "(Opcional) Schedule - No Laboral",
-                          "displayOrder": 6,
+                          "displayName": "Schedule 2",
+                          "displayOrder": 8,
                           "displayHint": "Formato Cron. Ejemplo: */10 * * * *."
                         },
                         {
-                        "key" : "timeframe",
-                        "displayName": "(Opcional) Timeframe",
-                        "displayOrder": 7,
-                        "displayHint": "Formato Dynatrace. Default: now-24h"
+                          "key" : "tag2",
+                          "displayName": "Tag Schedule 2",
+                          "displayOrder": 9,
+                          "displayHint": "Tag para identificar la dimension para el schedule 2"
                         }
           ]
     }
