@@ -106,15 +106,16 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         '''
         now = datetime.now().astimezone()
 
+        tag = ""
         if self.cronCheck(now, self.schedule):
             tag = self.tag
         
         if self.cronCheck(now, self.schedule2):
             tag = self.tag2
 
-        val = self.getMetric()
-        data = 'apdex.filter.' + self.name +',tag=' + tag +' ' + str(val)
-        self.sendMetric(data)
+        if tag != "":
+            val = self.getMetric()
+            data = 'apdex.filter.' + self.name +',tag=' + tag +' ' + str(val)
+            self.sendMetric(data)
 
-        logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX " + tag + ' | ' + self.name + " = " + str(val))
-
+            logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX " + tag + ' | ' + self.name + " = " + str(val))
