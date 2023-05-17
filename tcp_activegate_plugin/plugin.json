@@ -1,6 +1,6 @@
 {
   "name": "custom.remote.python.networkconnections",
-  "version": "2.1",
+  "version": "2.2",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "metricGroup": "tech.network",
@@ -10,7 +10,7 @@
   "source": {
     "package": "tcp_activegate_plugin",
     "className": "NetworkConnectionsPluginRemote",
-    "install_requires": ["requests>=2.6.0","paramiko"],
+    "install_requires": ["paramiko"],
     "activation": "Remote"
   },
   "metrics": [
