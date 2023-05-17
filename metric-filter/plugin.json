@@ -125,7 +125,7 @@
                         {
                           "key" : "timeframe",
                           "displayName": "(Opcional) Timeframe",
-                          "displayOrder": 5,
+                          "displayOrder": 10,
                           "displayHint": "Formato Dynatrace. Default: now-1h"
                         }
           ]

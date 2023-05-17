@@ -52,13 +52,13 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         timeframe = "&from=" + self.timeframe
         resolution = "&resolution=1m"
         metric = self.metric
-        
+       
         if self.type == "Metric":
             query = "/v2/metrics/query?metricSelector=" + urllib.parse.quote(metric, safe='()') + resolution  + timeframe
         else:
-            hora_atras = now - datetime.timedelta(hours=1)
+            hora_atras = now - timedelta(hours=1)
             timestamp = int(time.mktime(hora_atras.timetuple()))
-            params = "&startTimestamp=" + timestamp +"&addDeepLinkFields=false&explain=false"
+            params = "&startTimestamp=" + str(timestamp) + "000" + "&addDeepLinkFields=false&explain=false"
             query = "/v1/userSessionQueryLanguage/table?query=" + urllib.parse.quote(metric, safe='()') + params
 
         parametros = {
@@ -68,6 +68,7 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
 
         respuesta = requests.get(self.endpoint + query, headers=parametros, verify=False)
 
+        json_data=""
         if respuesta.status_code == 200:
             json_data = respuesta.json()
         else:
@@ -75,8 +76,13 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
 
         return json_data
 
-    def processUSQL(self, json_data):
-        return 0
+    def processUSQL(self, tag, json_data):
+        for t in json_data['values']:
+            metric = 'apdex.category.' + self.name +',category=' + t[0] + ',tag=' + tag +' ' + str(t[1])
+            self.sendMetric(metric)
+
+        return json_data['values']
+
     
     def processMetric(self, tag, json_data):
         metricId = json_data["result"][0]["metricId"]
@@ -103,7 +109,7 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         promedio = np.mean(X)
         desviacion = np.std(X)
 
-        metric = 'apdex.filter.' + self.name +',tag=' + tag +' ' + str(p50)
+        metric = 'apdex.val.' + self.name +',tag=' + tag +' ' + str(p50)
         self.sendMetric(metric)
 
         return p50
@@ -139,6 +145,6 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
             if self.type == "Metric":
                 val = self.processMetric(tag, jsonData)
             else:
-                val = self.processMetric(tag, jsonData)
+                val = self.processUSQL(tag, jsonData)
 
             logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX " + tag + ' | ' + self.name + " = " + str(val))
