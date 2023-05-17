@@ -19,7 +19,7 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         self.schedule = self.config["schedule"] or "*/1 * * * *"
         self.timeframe = self.config["timeframe"] or "now-24h"
 
-    def sendMetric(self, val):
+    def sendMetric(self, data):
         '''
         Routine send Metric via API to Dynatrace
         '''
@@ -29,7 +29,6 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
             'Content-Type': 'text/plain; charset=utf-8'
         }
 
-        data = 'apdex.filter,app=' + self.name +' ' + str(val)
         query = "/v2/metrics/ingest?"
 
         respuesta = requests.post(self.endpoint + query, headers=parametros, data=data, verify=False)
@@ -97,9 +96,13 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
 
         time_since = now - previous_execution
         if time_since <= timedelta(minutes=1):
-            val = self.getMetric()
+            horario = "laboral"
+        else:
+            horario = "nolaboral"
 
-            self.sendMetric(val)
+        val = self.getMetric()
+        data = 'apdex.filter.' + self.name +',horario=' + horario +' ' + str(val)
+        self.sendMetric(data)
 
-            logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX  | " + self.name + " = " + str(val))
+        logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX " + horario + ' | ' + self.name + " = " + str(val))
 

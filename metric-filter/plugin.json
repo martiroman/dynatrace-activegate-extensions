@@ -1,13 +1,13 @@
 {
   "name": "custom.remote.python.metricfilter",
   "metricGroup": "tech.extension",
-  "version": "1",
+  "version": "2",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "technologies": ["CustomMetric"],
   "favicon": "",
   "source": {
-    "package": "calc_apdex",
+    "package": "metric-filter",
     "className": "MetricFilterPluginRemote",
     "install_requires": ["requests>=2.6.0","pandas", "numpy", "croniter"],
     "activation": "Remote"
