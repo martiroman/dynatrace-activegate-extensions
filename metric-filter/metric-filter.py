@@ -6,6 +6,7 @@ from croniter import croniter
 import pandas as pd
 import numpy as np
 import urllib.parse
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         self.schedule2 = self.config["schedule2"] or "0 * * * *"
         self.tag2 = self.config["tag2"] or "schedule2"
         self.timeframe = self.config["timeframe"] or "now-1h"
+        self.type = self.config["type"]
 
     def sendMetric(self, data):
         '''
@@ -41,14 +43,23 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         else:
             logger.info("Error al enviar la metrica. Codigo de estado: ", respuesta.status_code)
 
-    def getMetric(self):
+    def getData(self):
         '''
         Routine extract Metric from Dynatrace via API
         '''
+        now = datetime.now().astimezone()
+
         timeframe = "&from=" + self.timeframe
         resolution = "&resolution=1m"
         metric = self.metric
-        query = "/v2/metrics/query?metricSelector=" + urllib.parse.quote(metric, safe='()') + resolution  + timeframe
+        
+        if self.type == "Metric":
+            query = "/v2/metrics/query?metricSelector=" + urllib.parse.quote(metric, safe='()') + resolution  + timeframe
+        else:
+            hora_atras = now - datetime.timedelta(hours=1)
+            timestamp = int(time.mktime(hora_atras.timetuple()))
+            params = "&startTimestamp=" + timestamp +"&addDeepLinkFields=false&explain=false"
+            query = "/v1/userSessionQueryLanguage/table?query=" + urllib.parse.quote(metric, safe='()') + params
 
         parametros = {
             'accept': 'application/json; charset=utf-8',
@@ -62,6 +73,12 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         else:
             logger.info("Error al hacer la solicitud API. Codigo de estado: ", respuesta.status_code)
 
+        return json_data
+
+    def processUSQL(self, json_data):
+        return 0
+    
+    def processMetric(self, tag, json_data):
         metricId = json_data["result"][0]["metricId"]
         dimensionMap = json_data["result"][0]["data"][0]["dimensionMap"]
         timestamps = json_data["result"][0]["data"][0]["timestamps"]
@@ -85,6 +102,9 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         mediana = np.median(X)
         promedio = np.mean(X)
         desviacion = np.std(X)
+
+        metric = 'apdex.filter.' + self.name +',tag=' + tag +' ' + str(p50)
+        self.sendMetric(metric)
 
         return p50
 
@@ -115,8 +135,10 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
             tag = self.tag2
 
         if tag != "":
-            val = self.getMetric()
-            data = 'apdex.filter.' + self.name +',tag=' + tag +' ' + str(val)
-            self.sendMetric(data)
+            jsonData = self.getData()
+            if self.type == "Metric":
+                val = self.processMetric(tag, jsonData)
+            else:
+                val = self.processMetric(tag, jsonData)
 
             logger.info(now.strftime("%Y-%M-%d %H:%M:%S") + " : APDEX " + tag + ' | ' + self.name + " = " + str(val))

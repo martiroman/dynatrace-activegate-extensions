@@ -1,7 +1,7 @@
 {
   "name": "custom.remote.python.metricfilter",
   "metricGroup": "tech.extension",
-  "version": "2.0",
+  "version": "4.0",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "technologies": ["CustomMetric"],
@@ -59,41 +59,45 @@
     {
       "key" : "timeframe",
       "type" : "string"
+    },
+    {
+      "key": "type", 
+      "type": "Dropdown", 
+      "dropdownValues": [ "Metric", "USQL" ], "defaultValue": "Metric" 
     }
   ],
   "configUI": {
         "displayName": "ActiveGate Metric Filter Extension",
         "properties": [
                         {
-                        "key" : "metric",
-                        "displayName" :  "Metrica APDEX",
-                        "displayOrder" : 2,
-                        "displayHint": "Ingrese la metrica a consultar. Ejemplo: calc:apps.web.sgi.sgiapdex"
-                        },
-                        {
                         "key" : "name",
                         "displayName" :  "Nombre Aplicacion",
                         "displayOrder" : 1,
                         "displayHint": "Ingrese el nombre de la aplicacion"
                         },
-                        {
-                        "key" : "token",
-                        "displayName" :  "API Token",
-                        "displayOrder" : 3,
-                        "displayHint": "Scope: metrics.ingest + metrics.read"
+                        { 
+                          "key": "type", 
+                          "displayName": "Tipo de consulta",
+                          "displayOrder" : 2
                         },
-                                                {
+                        {
+                          "key" : "metric",
+                          "displayName" :  "Metrica/USQL APDEX",
+                          "displayOrder" : 3,
+                          "displayHint": "Ingrese la metrica o USQL a consultar. Ejemplo: calc:apps.web.sgi.sgiapdex"
+                        },
+                        {
                         "key" : "endpoint",
                         "displayName" :  "API Endpoint",
                         "displayOrder" : 4,
-                        "displayHint": "URL: "
+                        "displayHint": "URL del Tenant"
                         },
                         {
-                          "key" : "timeframe",
-                          "displayName": "(Opcional) Timeframe",
-                          "displayOrder": 5,
-                          "displayHint": "Formato Dynatrace. Default: now-1h"
-                        },  
+                          "key" : "token",
+                          "displayName" :  "API Token",
+                          "displayOrder" : 5,
+                          "displayHint": "Scope: metrics.ingest + metrics.read (Metric) o DTAQLAccess (USQL)"
+                        },
                         {
                         "key" : "schedule",
                         "displayName": "Schedule 1",
@@ -117,6 +121,12 @@
                           "displayName": "Tag Schedule 2",
                           "displayOrder": 9,
                           "displayHint": "Tag para identificar la dimension para el schedule 2"
+                        },
+                        {
+                          "key" : "timeframe",
+                          "displayName": "(Opcional) Timeframe",
+                          "displayOrder": 5,
+                          "displayHint": "Formato Dynatrace. Default: now-1h"
                         }
           ]
     }
