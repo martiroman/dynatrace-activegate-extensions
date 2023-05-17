@@ -18,7 +18,7 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         self.endpoint = self.config["endpoint"]
         self.schedule = self.config["schedule"] or "*/1 * * * *"
         self.tag = self.config["tag"] or "schedule1"
-        self.schedule2 = self.config["schedule"] or "0 * * * *"
+        self.schedule2 = self.config["schedule2"] or "0 * * * *"
         self.tag2 = self.config["tag2"] or "schedule2"
         self.timeframe = self.config["timeframe"] or "now-1h"
 
@@ -94,6 +94,7 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         for ncron in cron_expr_list:
             cron = croniter(ncron, now, ret_type=datetime)
             previous_execution = cron.get_prev().astimezone()
+            next_execution = cron.get_next().astimezone()
 
             time_since = now - previous_execution
             if time_since <= timedelta(minutes=1):
