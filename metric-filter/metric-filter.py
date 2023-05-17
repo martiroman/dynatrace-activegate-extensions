@@ -88,8 +88,8 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
 
         return p50
 
-    def cronCheck(self, now, cron_expr_list):
-        cron_expr_list = self.schedule.split(';')
+    def cronCheck(self, now, scheduler):
+        cron_expr_list = scheduler.split(';')
         ejecuta = 0
         for ncron in cron_expr_list:
             cron = croniter(ncron, now, ret_type=datetime)
