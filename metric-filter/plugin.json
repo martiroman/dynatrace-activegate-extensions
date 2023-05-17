@@ -1,7 +1,7 @@
 {
   "name": "custom.remote.python.metricfilter",
   "metricGroup": "tech.extension",
-  "version": "2",
+  "version": "2.0",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "technologies": ["CustomMetric"],
@@ -45,6 +45,10 @@
       "type" : "string"
     },
     {
+      "key" : "schedule2",
+      "type" : "string"
+    },
+    {
       "key" : "timeframe",
       "type" : "string"
     }
@@ -78,14 +82,20 @@
                         },
                         {
                         "key" : "schedule",
-                        "displayName": "(Opcional) Schedule",
+                        "displayName": "(Opcional) Schedule - Laboral",
                         "displayOrder": 5,
                         "displayHint": "Formato Cron. Ejemplo: */10 * * * *. (Default cada 1 minuto)"
                         },
                         {
+                          "key" : "schedule2",
+                          "displayName": "(Opcional) Schedule - No Laboral",
+                          "displayOrder": 6,
+                          "displayHint": "Formato Cron. Ejemplo: */10 * * * *."
+                        },
+                        {
                         "key" : "timeframe",
                         "displayName": "(Opcional) Timeframe",
-                        "displayOrder": 6,
+                        "displayOrder": 7,
                         "displayHint": "Formato Dynatrace. Default: now-24h"
                         }
           ]

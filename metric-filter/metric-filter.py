@@ -17,6 +17,7 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         self.token = self.config["token"]
         self.endpoint = self.config["endpoint"]
         self.schedule = self.config["schedule"] or "*/1 * * * *"
+        self.schedule2 = self.config["schedule"] or "0 * * * *"
         self.timeframe = self.config["timeframe"] or "now-24h"
 
     def sendMetric(self, data):
@@ -90,14 +91,19 @@ class MetricFilterPluginRemote(RemoteBasePlugin):
         Routine call from the ActiveGate
         '''
         now = datetime.now().astimezone()
+        
         cron = croniter(self.schedule, now, ret_type=datetime)
         previous_execution = cron.get_prev().astimezone()
-        next_execution = cron.get_next().astimezone()
 
         time_since = now - previous_execution
         if time_since <= timedelta(minutes=1):
             horario = "laboral"
-        else:
+        
+        cron2 = croniter(self.schedule2, now, ret_type=datetime)
+        previuos_execution = cron2.get_prev().astimezone()
+        
+        time_since = now - previuos_execution
+        if time_since <= now - previous_execution:
             horario = "nolaboral"
 
         val = self.getMetric()
