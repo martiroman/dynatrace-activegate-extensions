@@ -1,6 +1,7 @@
 from ruxit.api.base_plugin import RemoteBasePlugin
 import logging
 import paramiko
+from Cryptodome.PublicKey import DSA
 
 logger = logging.getLogger(__name__)
 
@@ -31,17 +32,26 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
         ssh.close()     
         
     def connectSSH(self):
-        ## Conexion SSH
         ssh = paramiko.SSHClient()
         ssh.load_system_host_keys()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
 
         if self.key is not None:
-                logger.info("Conexion usando Key")
+            logger.info("Conexion usando Key")
+            try:
                 ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, key_filename=self.key, passphrase=self.passphrase)
+            except paramiko.ssh_exception.SSHException as e:
+                logger.error("Error al conectar con clave RSA. Intentando con clave DSA...")
+                try:
+                    private_key = paramiko.DSSKey.from_private_key_file(self.key, password=self.passphrase)
+                    ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, pkey=private_key)
+                    logger.info("Conexión exitosa con clave DSA.")
+                except paramiko.ssh_exception.SSHException as e:
+                    logger.error("No se pudo conectar con clave DSA. Error: {}".format(str(e)))
         else:
-                logger.info("Conexion usando")
-                ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, password=self.password, timeout=20)
+            logger.info("Conexion usando contraseña")
+            ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, password=self.password, timeout=20)
+
         return ssh
 
     def getMetric(self, patron, estado, ssh):
