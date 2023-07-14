@@ -1,6 +1,6 @@
 {
   "name": "custom.remote.python.networkconnections",
-  "version": "2.2",
+  "version": "2.6",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "metricGroup": "tech.network",
@@ -64,6 +64,11 @@
     },
     { "key": "ssh_key_passphrase", 
     "type": "Password" 
+    },
+    {
+      "key": "ssh_key_type", 
+      "type": "Dropdown", 
+      "dropdownValues": [ "RSA", "ECDSA", "DSA" ], "defaultValue": "RSA" 
     }
   ],
   "configUI": {
@@ -109,11 +114,16 @@
         "displayName": "(Opcional) Private key passphrase",
         "displayOrder": 7
     },
+    { 
+      "key": "ssh_key_type", 
+      "displayName": "Tipo de clave",
+      "displayOrder": 8
+    },
     {
 			"key" : "patron",
 			"displayName" :  "Patron",
 			"displayHint": "Separar por nombre de servicio con | y ,: Servicio1|104.18.29.219:525,Servicio2|localhost",
-      "displayOrder": 8
+      "displayOrder": 9
 		}
 	  ]
     },

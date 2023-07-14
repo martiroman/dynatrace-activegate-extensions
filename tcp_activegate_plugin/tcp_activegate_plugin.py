@@ -14,6 +14,7 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
         self.patron = self.config.get("patron")
         self.key = self.config.get("ssh_key_file") if self.config.get("ssh_key_file") else None
         self.passphrase = self.config.get("ssh_key_passphrase") if self.config.get("ssh_key_passphrase") else None
+        self.keyType = self.config.get("ssh_key_type")
 
     def query(self, **kwargs):
         self.group = self.topology_builder.create_group(identifier="NetworkConnectionsGroup", group_name="Network Connections")
@@ -37,16 +38,14 @@ class NetworkConnectionsPluginRemote(RemoteBasePlugin):
 
         if self.key is not None:
             logger.info("Conexion usando Key")
-            try:
+            if self.keyType == "RSA":
                 ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, key_filename=self.key, passphrase=self.passphrase)
-            except paramiko.ssh_exception.SSHException as e:
-                logger.error("Error al conectar con clave RSA. Intentando con clave DSA...")
-                try:
-                    private_key = paramiko.DSSKey.from_private_key_file(self.key, password=self.passphrase)
-                    ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, pkey=private_key)
-                    logger.info("Conexión exitosa con clave DSA.")
-                except paramiko.ssh_exception.SSHException as e:
-                    logger.error("No se pudo conectar con clave DSA. Error: {}".format(str(e)))
+            elif self.keyType == "ECDSA":    
+                private_key = paramiko.ECDSAKey.from_private_key_file(self.key, password=self.passphrase)
+                ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, pkey=private_key)
+            elif self.keyType == "DSA":    
+                private_key = paramiko.DSSKey.from_private_key_file(self.key, password=self.passphrase)
+                ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, pkey=private_key)
         else:
             logger.info("Conexion usando contraseña")
             ssh.connect(self.ipservidor, port=self.puerto, username=self.usuario, password=self.password, timeout=20)
