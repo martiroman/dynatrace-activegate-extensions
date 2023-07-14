@@ -1,7 +1,6 @@
 from ruxit.api.base_plugin import RemoteBasePlugin
 import logging
 import paramiko
-from Cryptodome.PublicKey import DSA
 
 logger = logging.getLogger(__name__)
 
