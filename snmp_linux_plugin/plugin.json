@@ -1,0 +1,88 @@
+{
+  "name": "custom.remote.python.linuxsnmp",
+  "version": "0.6",
+  "type": "python",
+  "entity": "CUSTOM_DEVICE",
+  "metricGroup": "tech.linux",
+  "processTypeNames": ["PYTHON"],
+  "technologies": ["Linux Metrics"],
+  "favicon": "",
+  "source": {
+    "package": "snmp_linux_plugin",
+    "className": "LinuxSnmpPluginRemote",
+    "install_requires": ["pysnmp"],
+    "activation": "Remote"
+  },
+  "metrics": [
+    {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries": {
+        "key": "linux.cpu.load",
+        "unit": "Percent",
+	"dimensions": ["host"],
+        "displayname": "Linux SNMP - CPU Load"
+      }
+    },
+    {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries": {
+        "key": "linux.mem",
+        "unit": "Count",
+	"dimensions": ["host", "metric"],
+        "displayname": "Linux SNMP - Memory"
+      }
+    }
+  ],
+    "properties" : [
+    {
+      "key" : "hostname",
+      "type" : "string"
+    },
+    {
+      "key" : "ip",
+      "type" : "string"
+    },
+    {
+      "key" : "community",
+      "type" : "password"
+    },
+    {
+      "key" : "port",
+      "type" : "string",
+      "defaultValue": "161"
+    },
+    {
+      "key": "version", 
+      "type": "Dropdown", 
+      "dropdownValues": [ "v1", "v2c" ], "defaultValue": "v2c" 
+    }
+  ],
+  "configUI": {
+        "displayName": "Linux SNMP Metrics",
+        "properties": [
+			{
+      "key" : "hostname",
+      "displayName" :  "Nombre Servidor",
+      "displayHint": "Ingrese un nombre para identificar el servidor",
+      "displayOrder": 1
+      },
+      {
+      "key" : "ip",
+      "displayName" :  "IP Servidor",
+      "displayHint": "Ingrese IP del servidor a monitorear",
+      "displayOrder": 2
+			},
+      {
+      "key" : "port",
+      "displayName" :  "Puerto",
+      "displayHint": "Default: 161",
+      "displayOrder": 3
+      },
+      {
+	"key" : "community",
+	"displayName" :  "Community",
+        "displayOrder": 4 
+      }
+        ]
+    }
+}
