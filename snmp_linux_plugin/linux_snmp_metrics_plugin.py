@@ -1,11 +1,15 @@
 from ruxit.api.base_plugin import RemoteBasePlugin
 import logging
-import sys
 import subprocess
 
 logger = logging.getLogger(__name__)
 
-class LinuxSnmpPluginRemote(RemoteBasePlugin):
+OID_LOAD =         ".1.3.6.1.2.1.25.3.3.1.2"
+OID_CPU_IDLE =     ".1.3.6.1.4.1.2021.11.11.0"
+OID_MEMORY_TOTAL = ".1.3.6.1.4.1.2021.4.5.0"
+OID_MEMORY_FREE =  ".1.3.6.1.4.1.2021.4.6.0"
+            
+class LinuxSnmpMetricsPluginRemote(RemoteBasePlugin):
     def initialize(self, **kwargs):
         self.hostname = self.config.get("hostname")
         self.ip = self.config.get("ip")
@@ -21,6 +25,7 @@ class LinuxSnmpPluginRemote(RemoteBasePlugin):
         self.device.report_property(key='IP addresses', value=self.ip)
 
         self.getCPULoad()
+        self.getMemory()
 
     def snmpwalk(self, oid):
         command = ["snmpwalk", "-v", "2c", "-c", self.community, f"{self.ip}:{self.port}", oid]
@@ -30,22 +35,38 @@ class LinuxSnmpPluginRemote(RemoteBasePlugin):
             return result.stdout
         else:
             logger.error(f"Error executing SNMPwalk: {result.stderr}")
-            return " "
+            return ""
 
+    def getVal(self, input_string):
+        start_index = input_string.find("INTEGER:") + len("INTEGER:")
+        last_number = input_string[start_index:].strip()
+
+        return last_number
+    
     def getCPULoad(self):
-        OID_LOAD = ".1.3.6.1.2.1.25.3.3.1.2"
-
         try:
-            output = self.snmpwalk(OID_LOAD)
-            cpu_load_values = [int(value) for value in output.strip().split("\n")]
-            cpu_count = len(cpu_load_values)
+            cpu_idle = self.getVal(self.snmpwalk(OID_CPU_IDLE))
+            cpu_busy = 100 - int(cpu_idle)
 
-            if cpu_count != 0:
-                avg_cpu_load = sum(cpu_load_values) / cpu_count
-                logger.info(f"{self.hostname} | CPU Load - value: {avg_cpu_load}")
-                self.device.absolute(key='linux.cpu.load', value=avg_cpu_load, dimensions={"host": self.hostname})
+            logger.info(f"{self.hostname} | CPU Usage - value: {cpu_busy}")
+            self.device.absolute(key='linux.cpu.usage', value=cpu_busy, dimensions={"host": self.hostname})
 
         except Exception as e:
-            logger.error(f"Error CPU LOAD: {str(e)}")
+            logger.error(f"Error CPU Usage: {str(e)}")
+
+        return 1
+    
+    def getMemory(self):
+        try:
+            mem_total = self.getVal(self.snmpwalk(OID_MEMORY_TOTAL)).split()[0]
+            mem_free = self.getVal(self.snmpwalk(OID_MEMORY_FREE)).split()[0]
+
+            mem_used = 100 - 100 * (int(mem_free) / int(mem_total))
+
+            logger.info(f"{self.hostname} | Memory - value: {mem_used}")
+            self.device.absolute(key='linux.mem', value=mem_used, dimensions={"host": self.hostname})
+
+        except Exception as e:
+            logger.error(f"Error Memory: {str(e)}")
 
         return 1

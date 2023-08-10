@@ -1,6 +1,6 @@
 {
-  "name": "custom.remote.python.linuxsnmp",
-  "version": "0.6",
+  "name": "custom.remote.python.linuxsnmpmetrics",
+  "version": "0.1",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "metricGroup": "tech.linux",
@@ -8,8 +8,8 @@
   "technologies": ["Linux Metrics"],
   "favicon": "",
   "source": {
-    "package": "snmp_linux_plugin",
-    "className": "LinuxSnmpPluginRemote",
+    "package": "linux_snmp_metrics_plugin",
+    "className": "LinuxSnmpMetricsPluginRemote",
     "install_requires": ["pysnmp"],
     "activation": "Remote"
   },
@@ -17,18 +17,18 @@
     {
       "entity": "CUSTOM_DEVICE",
       "timeseries": {
-        "key": "linux.cpu.load",
-        "unit": "Percent",
-	"dimensions": ["host"],
-        "displayname": "Linux SNMP - CPU Load"
+      "key": "linux.cpu.usage",
+      "unit": "Percent",
+	    "dimensions": ["host"],
+      "displayname": "Linux SNMP - CPU Usage"
       }
     },
     {
       "entity": "CUSTOM_DEVICE",
       "timeseries": {
-        "key": "linux.mem",
+        "key": "linux.memory",
         "unit": "Count",
-	"dimensions": ["host", "metric"],
+	      "dimensions": ["host"],
         "displayname": "Linux SNMP - Memory"
       }
     }
@@ -79,10 +79,60 @@
       "displayOrder": 3
       },
       {
-	"key" : "community",
-	"displayName" :  "Community",
-        "displayOrder": 4 
+	    "key" : "community",
+	    "displayName" :  "Community",
+      "displayOrder": 4 
       }
-        ]
-    }
+    ]
+    },
+    "ui": {
+      "keymetrics" : [
+     {
+       "key": "linux.cpu.usage",
+       "aggregation": "avg",
+       "mergeaggregation": "avg",
+       "displayname": "CPU Usage"
+     },
+     {
+       "key": "linux.memory",
+       "aggregation": "avg",
+       "mergeaggregation": "avg",
+       "displayname": "Memory"
+     }
+   ],
+       "charts": [
+           {
+               "group": "SNMP Linux Metrics",
+               "title": "CPU Usage",
+               "description": " - ",
+               "explanation": " - ",
+               "link": " - ",
+               "series": [
+                   {
+                       "key": "linux.cpu.usage",
+                       "displayname": "CPU Usage",
+                       "seriestype": "bar",
+                       "stacked": false,
+                       "color": "#00cc00"
+                   }
+               ]
+           },
+           {
+            "group": "SNMP Linux Metrics",
+            "title": "Memory",
+            "description": " - ",
+            "explanation": " - ",
+            "link": " - ",
+            "series": [
+                {
+                    "key": "linux.memory",
+                    "displayname": "Memory",
+                    "seriestype": "bar",
+                    "stacked": false,
+                    "color": "#00cc00"
+                }
+            ]
+        }
+       ]
+   }
 }
