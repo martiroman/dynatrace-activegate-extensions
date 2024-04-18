@@ -65,7 +65,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
 
 
     def send_metric(self, path, usage):
-        logger.info(path + "- " + "usage=" + usage)
+        logger.info(path + "- " + "usage=" + str(usage))
 
         self.device.absolute(key=path, value=usage)
 #        self.device.report_property(key='quota path', value=usage)
