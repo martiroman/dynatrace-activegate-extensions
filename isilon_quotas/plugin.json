@@ -1,10 +1,10 @@
 {
   "name": "custom.remote.python.isilon-quota",
-  "metricGroup": "tech.extension",
-  "version": "4.0",
+  "version": "0.1",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
-  "technologies": ["CustomMetric"],
+  "metricGroup": "tech.extension",
+  "technologies": ["IsilonQuota"],
   "favicon": "",
   "source": {
     "package": "isilon-quota",
@@ -18,7 +18,7 @@
       "timeseries": {
         "key": "isilon-quota",
         "unit": "Count",
-        "dimensions": ["app"],
+        "dimensions": ["usage"],
         "displayname": "isilonQuota"
       }
     }

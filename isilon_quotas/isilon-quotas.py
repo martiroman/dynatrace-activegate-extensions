@@ -2,7 +2,6 @@ from ruxit.api.base_plugin import RemoteBasePlugin
 import logging
 import requests
 import base64
-import json
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +65,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
 
 
     def send_metric(self, path, usage):
-        logger.info(path + "- " + "porcentaje=" + usage)
+        logger.info(path + "- " + "usage=" + usage)
 
         self.device.absolute(key=path, value=usage)
 #        self.device.report_property(key='quota path', value=usage)
