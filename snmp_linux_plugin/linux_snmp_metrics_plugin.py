@@ -8,7 +8,8 @@ OID_LOAD =         ".1.3.6.1.2.1.25.3.3.1.2"
 OID_CPU_IDLE =     ".1.3.6.1.4.1.2021.11.11.0"
 OID_MEMORY_TOTAL = ".1.3.6.1.4.1.2021.4.5.0"
 OID_MEMORY_FREE =  ".1.3.6.1.4.1.2021.4.6.0"
-            
+OID_NAME =         "1.3.6.1.2.1.1.5.0"
+
 class LinuxSnmpMetricsPluginRemote(RemoteBasePlugin):
     def initialize(self, **kwargs):
         self.hostname = self.config.get("hostname")
@@ -17,13 +18,14 @@ class LinuxSnmpMetricsPluginRemote(RemoteBasePlugin):
         self.port = self.config.get("port") if self.config.get("port") else "161"
 
     def query(self, **kwargs):
-        self.group = self.topology_builder.create_group(identifier="LinuxSnmpHostGroup", group_name="Linux SNMP Host")
+        self.group = self.topology_builder.create_group(identifier="LinuxSnmpMetricsHostGroup", group_name="Linux SNMP Metrics Host")
         #self.device = self.group.create_device(identifier=self.ip, display_name=self.hostname)
         self.device = self.group.create_device(identifier="test", display_name=self.hostname)
 
         logger.info("Topology: group name=%s, device name=%s", self.group.name, self.device.name)
-        self.device.report_property(key='IP addresses', value=self.ip)
 
+
+        self.setProperties()
         self.getCPULoad()
         self.getMemory()
 
@@ -42,7 +44,19 @@ class LinuxSnmpMetricsPluginRemote(RemoteBasePlugin):
         last_number = input_string[start_index:].strip()
 
         return last_number
-    
+
+    def setProperties(self):
+        try:
+            name = self.snmpwalk(OID_NAME).strip()[3]
+            self.device.report_property(key='SysName', value=name)
+            self.device.add_endpoint("10.250.1.107", 10250)
+            self.device.report_property(key='IP addresses', value=self.ip)
+
+        except Exception as e:
+            logger.error(f"Error set properties")
+
+        return 1
+
     def getCPULoad(self):
         try:
             cpu_idle = self.getVal(self.snmpwalk(OID_CPU_IDLE))
@@ -55,7 +69,7 @@ class LinuxSnmpMetricsPluginRemote(RemoteBasePlugin):
             logger.error(f"Error CPU Usage: {str(e)}")
 
         return 1
-    
+
     def getMemory(self):
         try:
             mem_total = self.getVal(self.snmpwalk(OID_MEMORY_TOTAL)).split()[0]
@@ -64,7 +78,7 @@ class LinuxSnmpMetricsPluginRemote(RemoteBasePlugin):
             mem_used = 100 - 100 * (int(mem_free) / int(mem_total))
 
             logger.info(f"{self.hostname} | Memory - value: {mem_used}")
-            self.device.absolute(key='linux.mem', value=mem_used, dimensions={"host": self.hostname})
+            self.device.absolute(key='linux.memory', value=mem_used, dimensions={"host": self.hostname})
 
         except Exception as e:
             logger.error(f"Error Memory: {str(e)}")

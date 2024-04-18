@@ -1,0 +1,61 @@
+{
+  "name": "custom.remote.python.isilon-quota",
+  "metricGroup": "tech.extension",
+  "version": "4.0",
+  "type": "python",
+  "entity": "CUSTOM_DEVICE",
+  "technologies": ["CustomMetric"],
+  "favicon": "",
+  "source": {
+    "package": "isilon-quota",
+    "className": "IsilonQuotaPluginRemote",
+    "install_requires": ["requests>=2.6.0"],
+    "activation": "Remote"
+  },
+  "metrics": [
+    {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries": {
+        "key": "isilon-quota",
+        "unit": "Count",
+        "dimensions": ["app"],
+        "displayname": "isilonQuota"
+      }
+    }
+  ],
+    "properties" : [
+    {
+      "key" : "ip",
+      "type" : "string"
+    },
+    {
+      "key" : "user",
+      "type" : "string"
+    },
+    {
+      "key" : "password",
+      "type" : "string"
+    }
+  ],
+  "configUI": {
+        "displayName": "Isilon Quota Extension",
+        "properties": [
+                        {
+                        "key" : "ip",
+                        "displayName" :  "IP del Host",
+                        "displayOrder" : 1
+                        },
+                        { 
+                          "key": "user", 
+                          "displayName": "Usuario",
+                          "displayOrder" : 2
+                        },
+                        {
+                        "key" : "password",
+                        "displayName" :  "Password",
+                        "displayOrder" : 3
+                        }
+          ]
+    }
+}
+

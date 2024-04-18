@@ -27,7 +27,7 @@
       "entity": "CUSTOM_DEVICE",
       "timeseries": {
         "key": "linux.memory",
-        "unit": "Count",
+        "unit": "Percent",
 	      "dimensions": ["host"],
         "displayname": "Linux SNMP - Memory"
       }
@@ -102,7 +102,7 @@
    ],
        "charts": [
            {
-               "group": "SNMP Linux Metrics",
+               "group": "CPU",
                "title": "CPU Usage",
                "description": " - ",
                "explanation": " - ",
@@ -118,15 +118,15 @@
                ]
            },
            {
-            "group": "SNMP Linux Metrics",
-            "title": "Memory",
+            "group": "Memory",
+            "title": "Memory Usage",
             "description": " - ",
             "explanation": " - ",
             "link": " - ",
             "series": [
                 {
                     "key": "linux.memory",
-                    "displayname": "Memory",
+                    "displayname": "Memory Usage",
                     "seriestype": "bar",
                     "stacked": false,
                     "color": "#00cc00"
