@@ -1,13 +1,13 @@
 {
   "name": "custom.remote.python.isilon-quota",
-  "version": "0.1",
+  "version": "0.2",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "metricGroup": "tech.extension",
   "technologies": ["IsilonQuota"],
   "favicon": "",
   "source": {
-    "package": "isilon-quota",
+    "package": "isilon_quota",
     "className": "IsilonQuotaPluginRemote",
     "install_requires": ["requests>=2.6.0"],
     "activation": "Remote"
