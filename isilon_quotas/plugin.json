@@ -1,5 +1,5 @@
 {
-  "name": "custom.remote.python.isilon-quota",
+  "name": "custom.remote.python.isilonQuota",
   "version": "0.2",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
@@ -7,7 +7,7 @@
   "technologies": ["IsilonQuota"],
   "favicon": "",
   "source": {
-    "package": "isilon_quota",
+    "package": "isilonQuota",
     "className": "IsilonQuotaPluginRemote",
     "install_requires": ["requests>=2.6.0"],
     "activation": "Remote"
@@ -16,7 +16,7 @@
     {
       "entity": "CUSTOM_DEVICE",
       "timeseries": {
-        "key": "isilon-quota",
+        "key": "isilonQuota",
         "unit": "Count",
         "dimensions": ["usage"],
         "displayname": "isilonQuota"
