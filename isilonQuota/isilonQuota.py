@@ -10,7 +10,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
         self.ip = self.config["ip"]
         self.user = self.config["user"]
         self.password = self.config["password"]
-        self.url = 'https://{self.ip}:8080/platform/6/quota/quotas'
+        self.url = f'https://{self.ip}:8080/platform/6/quota/quotas'
 
     def query(self, **kwargs):
         self.group = self.topology_builder.create_group(identifier="StorageGroup", group_name="Storage")
