@@ -17,8 +17,8 @@
       "entity": "CUSTOM_DEVICE",
       "timeseries": {
         "key": "isilon.quota",
-        "unit": "percent",
-        "dimensions": ["ip, path"],
+        "unit": "Percent",
+        "dimensions": ["ip", "path"],
         "displayname": "isilonQuota"
       }
     }
