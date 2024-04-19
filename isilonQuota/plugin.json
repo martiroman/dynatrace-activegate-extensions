@@ -7,7 +7,7 @@
   "technologies": ["IsilonQuota"],
   "favicon": "",
   "source": {
-    "package": "isilon.quota",
+    "package": "isilonQuota",
     "className": "IsilonQuotaPluginRemote",
     "install_requires": ["requests>=2.6.0"],
     "activation": "Remote"
