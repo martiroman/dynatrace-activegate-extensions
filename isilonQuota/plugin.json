@@ -16,9 +16,9 @@
     {
       "entity": "CUSTOM_DEVICE",
       "timeseries": {
-        "key": "isilonQuota",
-        "unit": "Count",
-        "dimensions": ["usage"],
+        "key": "isilon.quota",
+        "unit": "percent",
+        "dimensions": ["ip, path"],
         "displayname": "isilonQuota"
       }
     }

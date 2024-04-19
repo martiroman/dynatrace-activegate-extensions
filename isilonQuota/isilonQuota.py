@@ -35,7 +35,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
                 
                 for quota in quotas:
                     path = quota["path"]
-                    print("Path:", path)
+                    #print("Path:", path)
 
                     thresholds = quota["thresholds"]
                     hard = thresholds.get("hard")
@@ -43,7 +43,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
                     logical = usage.get("logical")
 
                     if hard is None or logical is None:
-                      print(" No hay datos ", path)
+                      #print(" No hay datos ", path)
                       continue
 
                     hard = hard #/ (1024 * 1024 * 1024 * 1024)
@@ -57,15 +57,15 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
 
                 logger.info(quotas)
             else:
-                print(f"Error: {response.status_code}") 
+                logger.info(f"Error: {response.status_code}") 
             
         except Exception as e:
-            print("Error:", e)
+            logger.info("Error:", e)
 
 
 
     def send_metric(self, path, usage):
-        logger.info(path + "- " + "usage=" + str(usage))
+        logger.info("quota." + path + "- " + "usage=" + str(usage))
 
-        self.device.absolute(key=path, value=usage)
+        self.device.absolute(key="isilon.quota", value=usage, dimensions = { "ip" : self.ip, "path" : path })
 #        self.device.report_property(key='quota path', value=usage)
