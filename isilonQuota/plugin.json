@@ -34,7 +34,7 @@
     },
     {
       "key" : "password",
-      "type" : "string"
+      "type" : "password"
     }
   ],
   "configUI": {

@@ -68,6 +68,5 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
             usage = 100
         if usage < 0:
             usage = 0
-                        
+
         self.device.absolute(key="isilon.quota", value=usage, dimensions = { "ip" : self.ip, "path" : path })
-#        self.device.report_property(key='quota path', value=usage)
