@@ -44,13 +44,10 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
                     if hard is None or logical is None:
                       continue
 
-                    hard = hard #/ (1024 * 1024 * 1024 * 1024)
-                    logical = logical #/ (1024 * 1024 * 1024 * 1024)
-
-                    dif = hard - logical
+                    hard = hard
+                    logical = logical
                     div = round((logical / hard) * 100,2)
                     
-                
                     self.send_metric(path, div)
 
             else:
