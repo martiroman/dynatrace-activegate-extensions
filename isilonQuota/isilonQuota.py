@@ -10,7 +10,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
         self.ip = self.config["ip"]
         self.user = self.config["user"]
         self.password = self.config["password"]
-        self.url = f'http://{self.ip}:8080/platform/6/quota/quotas'
+        self.url = f'https://{self.ip}:8080/platform/6/quota/quotas'
 
     def query(self, **kwargs):
         self.group = self.topology_builder.create_group(identifier="StorageGroup", group_name="Storage")
@@ -27,7 +27,8 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
             encoded_credentials = base64.b64encode(f"{self.user}:{self.password}".encode()).decode('utf-8')
             headers = {"Authorization": f"Basic {encoded_credentials}"}
 
-            response = requests.get(self.url, headers=headers)
+            response = requests.get(self.url, headers=headers, verify=False)
+            logging.info("Response: " + response.status_code)
 
             if response.status_code == 200:
                 isi_object = response.json()
@@ -52,10 +53,9 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
 
             else:
                 logger.info(f"Error: {response.status_code}") 
-            
+                            
         except Exception as e:
             logger.info("Error:", e)
-
 
 
     def send_metric(self, path, usage):
