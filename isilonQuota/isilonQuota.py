@@ -25,7 +25,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
         headers = {"Authorization": f"Basic {encoded_credentials}"}
 
         response = requests.get(self.url, headers=headers, verify=False)
-        logging.info("Response: " + str(response.status_code))
+        logger.info(f"Response: {response.status_code} - {response.headers}")
 
         if response.status_code < 400:
             isi_object = response.json()
@@ -46,7 +46,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
                 logical = logical
                 usage = round((logical / hard) * 100,2)
                 
-                logger.info("quota." + path + "- " + "usage=" + str(usage))
+                #logger.info("quota." + path + "- " + "usage=" + str(usage))
 
                 if usage > 100:
                     usage = 100
