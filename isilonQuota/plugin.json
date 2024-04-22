@@ -1,6 +1,6 @@
 {
   "name": "custom.remote.python.isilonQuota",
-  "version": "0.8",
+  "version": "0.10",
   "type": "python",
   "entity": "CUSTOM_DEVICE",
   "metricGroup": "tech.extension",

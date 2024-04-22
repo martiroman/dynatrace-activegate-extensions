@@ -25,7 +25,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
         headers = {"Authorization": f"Basic {encoded_credentials}"}
 
         response = requests.get(self.url, headers=headers, verify=False)
-        logging.info("Response: " + response.status_code)
+        logging.info("Response: " + str(response.status_code))
 
         if response.status_code < 400:
             isi_object = response.json()
