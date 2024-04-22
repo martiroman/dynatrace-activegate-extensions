@@ -12,7 +12,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
         self.ip = self.config["ip"]
         self.user = self.config["user"]
         self.password = self.config["password"]
-        self.url = f'https://{self.ip}:8080/platform/6/quota/quotas'
+        self.url = f'http://{self.ip}:8080/platform/6/quota/quotas'
 
     def query(self, **kwargs):
         self.group = self.topology_builder.create_group(identifier="StorageGroup", group_name="Storage")
@@ -21,51 +21,40 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
         logger.info("Topology: group name=%s, device name=%s", self.group.name, self.device.name)
         self.device.report_property(key='IP addresses', value=self.ip)
 
-        self.queryAPI()
+        encoded_credentials = base64.b64encode(f"{self.user}:{self.password}".encode()).decode('utf-8')
+        headers = {"Authorization": f"Basic {encoded_credentials}"}
 
+        response = requests.get(self.url, headers=headers, verify=False)
+        logging.info("Response: " + response.status_code)
 
-    def queryAPI(self):
-        try:
-            encoded_credentials = base64.b64encode(f"{self.user}:{self.password}".encode()).decode('utf-8')
-            headers = {"Authorization": f"Basic {encoded_credentials}"}
+        if response.status_code < 400:
+            isi_object = response.json()
+            quotas = isi_object['quotas']
+            
+            for quota in quotas:
+                path = quota["path"]
 
-            response = requests.get(self.url, headers=headers, verify=False)
-            logging.info("Response: " + response.status_code)
+                thresholds = quota["thresholds"]
+                hard = thresholds.get("hard")
+                usage = quota["usage"]
+                logical = usage.get("logical")
 
-            if response.status_code < 400:
-                isi_object = response.json()
-                quotas = isi_object['quotas']
+                if hard is None or logical is None:
+                    continue
+
+                hard = hard
+                logical = logical
+                usage = round((logical / hard) * 100,2)
                 
-                for quota in quotas:
-                    path = quota["path"]
+                logger.info("quota." + path + "- " + "usage=" + str(usage))
 
-                    thresholds = quota["thresholds"]
-                    hard = thresholds.get("hard")
-                    usage = quota["usage"]
-                    logical = usage.get("logical")
+                if usage > 100:
+                    usage = 100
+                if usage < 0:
+                    usage = 0
 
-                    if hard is None or logical is None:
-                      continue
+                self.device.absolute(key="isilon.quota", value=usage, dimensions = { "ip" : self.ip, "path" : path })
 
-                    hard = hard
-                    logical = logical
-                    div = round((logical / hard) * 100,2)
-                    
-                    self.send_metric(path, div)
-
-            else:
-                logger.error(f"Error: {response.status_code}") 
+        else:
+            logger.error(f"Error: {response.status_code}") 
                             
-        except Exception as e:
-            logger.error("Error:", e)
-
-
-    def send_metric(self, path, usage):
-        logger.info("quota." + path + "- " + "usage=" + str(usage))
-
-        if usage > 100:
-            usage = 100
-        if usage < 0:
-            usage = 0
-
-        self.device.absolute(key="isilon.quota", value=usage, dimensions = { "ip" : self.ip, "path" : path })
