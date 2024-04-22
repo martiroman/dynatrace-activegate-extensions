@@ -2,7 +2,9 @@ from ruxit.api.base_plugin import RemoteBasePlugin
 import logging
 import requests
 import base64
+import urllib3
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 logger = logging.getLogger(__name__)
 
 class IsilonQuotaPluginRemote(RemoteBasePlugin):
@@ -30,7 +32,7 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
             response = requests.get(self.url, headers=headers, verify=False)
             logging.info("Response: " + response.status_code)
 
-            if response.status_code == 200:
+            if response.status_code < 400:
                 isi_object = response.json()
                 quotas = isi_object['quotas']
                 
@@ -52,10 +54,10 @@ class IsilonQuotaPluginRemote(RemoteBasePlugin):
                     self.send_metric(path, div)
 
             else:
-                logger.info(f"Error: {response.status_code}") 
+                logger.error(f"Error: {response.status_code}") 
                             
         except Exception as e:
-            logger.info("Error:", e)
+            logger.error("Error:", e)
 
 
     def send_metric(self, path, usage):

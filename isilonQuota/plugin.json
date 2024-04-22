@@ -9,7 +9,7 @@
   "source": {
     "package": "isilonQuota",
     "className": "IsilonQuotaPluginRemote",
-    "install_requires": ["requests>=2.6.0"],
+    "install_requires": ["requests>=2.6.0", "urllib3"],
     "activation": "Remote"
   },
   "metrics": [
